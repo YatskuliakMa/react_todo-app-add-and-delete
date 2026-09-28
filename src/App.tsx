@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 /* eslint-disable jsx-a11y/control-has-associated-label */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { creatTodo, deleteTodo, getTodos, USER_ID } from './api/toods';
 import { Todo } from './types/Todo';
 import { FilterStatus } from './types/FilterStatus';
@@ -109,16 +109,18 @@ export const App: React.FC = () => {
     setLoadingTodoIds(prev => prev.filter(id => !completedIds.includes(id)));
   };
 
-  const visibleTodos = todos.filter(todo => {
-    switch (filter) {
-      case FilterStatus.Active:
-        return !todo.completed;
-      case FilterStatus.Completed:
-        return todo.completed;
-      default:
-        return true;
-    }
-  });
+  const visibleTodos = useMemo(() => {
+    return todos.filter(todo => {
+      switch (filter) {
+        case FilterStatus.Active:
+          return !todo.completed;
+        case FilterStatus.Completed:
+          return todo.completed;
+        default:
+          return true;
+      }
+    });
+  }, [todos, filter]);
 
   return (
     <div className="todoapp">
